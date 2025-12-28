@@ -7,10 +7,22 @@ import tiktoken
 from openai import OpenAI
 
 VERSION = "v0.1.0"
-CONFIG_PATH = os.path.expanduser("~/.cmt.yml")
+CONFIG_PATH = os.path.expanduser("~/.cmmt.yml")
 
 # Constants for commit types and branch types
-COMMIT_TYPES = ["feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert"]
+COMMIT_TYPES = [
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "perf",
+    "test",
+    "build",
+    "ci",
+    "chore",
+    "revert",
+]
 BRANCH_TYPES = ["feat", "fix", "docs", "style", "refactor", "perf", "test", "chore"]
 
 # Default model
@@ -49,9 +61,7 @@ def get_git_diff(config):
         if config.get("ignore_files"):
             for file in config["ignore_files"]:
                 command.extend(["--", f":(exclude){file}"])
-        result = subprocess.run(
-            command, capture_output=True, text=True, check=True
-        )
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError:
         return ""
@@ -96,10 +106,14 @@ Closes #123
 - Types: feat, fix, docs, style, refactor, perf, test, chore.
 """
 
-    prompt += """# Important
+    prompt += (
+        """# Important
 You must strictly follow the specifications without any deviations.
 # Output Format
-You can only output content similar to the following: """ + format_str + "\n"
+You can only output content similar to the following: """
+        + format_str
+        + "\n"
+    )
 
     if args.extra_info or config.get("extra_info"):
         prompt += "# Extra Information\n"
@@ -189,8 +203,8 @@ def execute_git_commands(commit_msg, branch_name, args):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="cmt", description="AI Git Helper")
-    parser.add_argument("-v", "--version", action="version", version=f"cmt {VERSION}")
+    parser = argparse.ArgumentParser(prog="cmmt", description="AI Git Helper")
+    parser.add_argument("-v", "--version", action="version", version=f"cmmt {VERSION}")
     parser.add_argument("--init", action="store_true", help="Initialize config file")
     parser.add_argument("-p", "--push", action="store_true", help="Post commit push")
     parser.add_argument("-y", "--yes", action="store_true", help="Auto confirm")
